@@ -1,0 +1,6 @@
+kl8  FAILED: <HTTPError 403: 'Forbidden'>
+ssq  FAILED: <HTTPError 403: 'Forbidden'>
+pl5  FAILED: <HTTPError 567: 'Unknown Status'>
+dlt  FAILED: <HTTPError 567: 'Unknown Status'>
+qxc  FAILED: <HTTPError 567: 'Unknown Status'>
+抓取失败彩种: kl8,ssq,pl5,dlt,qxc
