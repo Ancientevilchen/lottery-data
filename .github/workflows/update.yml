@@ -1,6 +1,9 @@
 name: update-lottery-data
 
 on:
+  # 推改脚本时立即验证一次（机器人自己的 commit 不会触发新 run）
+  push:
+    branches: [main]
   schedule:
     # 北京时间 22:40 与 23:40，各彩种当晚开奖均已出
     - cron: "40 14,15 * * *"
