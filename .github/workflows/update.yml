@@ -1,57 +1,23 @@
 name: update-lottery-data
 
+# 状态：暂停自动运行。
+# 实测：GitHub Actions 的机房 IP 被福彩官方接口（cwl.gov.cn，HTTP 403）与体彩官方接口
+# （webapi.sporttery.cn，HTTP 567）拒绝，自动抓取在本仓库不可用。
+# 文件保留仅供手动排查，不要恢复 schedule。页面已改为运行时直接向官方接口取数。
+
 on:
-  # 推改脚本时立即验证一次（机器人自己的 commit 不会触发新 run）
-  push:
-    branches: [main]
-  schedule:
-    # 北京时间 22:40 与 23:40，各彩种当晚开奖均已出
-    - cron: "40 14,15 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
-
-concurrency:
-  group: lottery-data-update
-  cancel-in-progress: false
 
 jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Fetch lottery data
-        id: fetch
-        continue-on-error: true
-        run: |
-          set +e
-          python3 fetch_data.py > /tmp/fetch.log 2>&1
-          rc=$?
-          cat /tmp/fetch.log
-          if [ $rc -ne 0 ]; then
-            cp /tmp/fetch.log fetch-error.log
-          fi
-          exit $rc
-
-      - name: Commit data
-        if: always()
-        run: |
-          git config user.name "lottery-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then
-            echo "no data change"
-          else
-            git commit -m "data: $(date -u +%Y-%m-%dT%H:%MZ)"
-            git push
-          fi
-
-      - name: Fail if fetch failed
-        if: steps.fetch.outcome == 'failure'
-        run: exit 1
+        run: python3 fetch_data.py
